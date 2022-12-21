@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework-simplejwt',
+    'rest_framework_simplejwt',
     'costumers.apps.CostumersConfig',
     'payments.apps.PaymentsConfig',
 ]
@@ -139,3 +139,6 @@ SIMPLE_JWT = {
 }
 
 AUTH_USER_MODEL = 'costumers.Costumer'
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
