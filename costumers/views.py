@@ -1,5 +1,4 @@
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -23,8 +22,6 @@ class RegisterView(APIView):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 class CostumersView(APIView):
-    permission_classes = [IsAuthenticated]
-
     def get(self, request):
         costumers = Costumer.objects.all()
         serializer = CostumerSerializer(costumers, many=True)

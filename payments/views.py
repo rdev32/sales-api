@@ -1,27 +1,22 @@
-# from rest_framework import status
-# from rest_framework.response import Response
-# from rest_framework.views import APIView
-# from rest_framework.generics import GenericAPIView
-# from rest_framework.permissions import AllowAny
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import filters
 
-# from payments.serializers import SignUpSerializer, LoginSerializer
+from payments.models import Payment
+from payments.serializers import PaymentSerializer
+from payments.pagination import PaymentsSetPagination
 
-# class SignUpView(GenericAPIView):
-#     serializer_class = SignUpSerializer
+class PaymentViewSet(ModelViewSet):
+    queryset = Payment.objects.get_queryset().order_by('date')
+    serializer_class = PaymentSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [filters.SearchFilter]
+    pagination_class = PaymentsSetPagination
+    search_fields = ['usuario__id', 'fecha_pago', 'servicio']
+    throttle_scope = 'payments'
 
-#     def post(self, request):
-#         serializer = self.serializer_class(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save()
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def get_queryset(self):
+        return Payment.objects.filter(user=self.request.user)
 
-# class LoginView(APIView):
-#     permission_classes = (AllowAny,)
-
-#     def get(self, request):
-#         return Response({'message': 'Hello, world!'})
-
-#     def post(self, request):
-#         serializer = LoginSerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
